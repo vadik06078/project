@@ -1,0 +1,66 @@
+
+<html>
+<head>
+    <title>Data Base</title>
+</head>
+<script src="../server.js"></script>
+<body>
+<h1></h1>
+<!--
+<form action="/mainPage" method="post">
+    <input type="text" name="id">
+    <button type="submit">Submit</button>
+</form>
+
+-->
+
+
+<form class="selected" action="/mainPage" method="post">
+    <select  name="filter">
+        <option value="name">Имя автора</option>
+        <option value="sname">Фамилия автора</option>
+        <option value="bookname">Название книги</option>
+        <option value="year">Год издания</option>
+        <option value="pubHouse">Издательство</option>
+        <option value="secHand">Подержана</option>
+    </select>
+    <input type="text" name="id">
+    <button type="submit" onclick="somefunc()">Отфильтровать</button>
+</form>
+
+</body>
+
+<table>
+    <tr>
+        <th>Название книги</th><th>Имя автора</th><th>Фамилия автора</th><th>Год издания</th><th>Издательство</th><th>Подержана</th>
+    </tr>
+
+
+    <% if(flag) {%>
+    <% Books.forEach(function(Book, j) { %>
+    <tr>
+        <td><%= Books[j].bookname %></td>
+        <td><%= Authors[j].name %></td>
+        <td><%= Authors[j].sname %></td>
+        <td><%= Book.year %></td>
+        <td><%= Book.pubHouse %></td>
+        <td><%= Book.secHand %></td>
+    </tr>
+    <% }); %>
+    <% } else { %>
+    <% Authors.forEach(function(Author, j) { %>
+    <tr>
+        <td><%= Books[j].bookname %></td>
+        <td><%= Authors[j].name %></td>
+        <td><%= Authors[j].sname %></td>
+        <td><%= Books[j].year %></td>
+        <td><%= Books[j].pubHouse %></td>
+        <td><%= Books[j].secHand %></td>
+    </tr>
+    <% }); %>
+    <% } %>
+
+</table>
+
+
+</html>
