@@ -1,6 +1,8 @@
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../app/models/user');
 
+var message = "";
+
 module.exports = function(passport) {
     passport.serializeUser(function(user, done){
         done(null, user.id);
@@ -26,19 +28,27 @@ module.exports = function(passport) {
 
             process.nextTick(function(){
                 User.findOne({'local.email':email}, function(err, user){
-                    if(errors){
+                    if(req.body.email === "123")
+                    {
+                        req.body.email = "";
+                    };
 
+
+                    if(errors){
                         if (errors[0].param === "email") {
-                            return done(null, false, req.flash('signupMessage', 'Incorrect Email'));
+                            message = ['Incorrect Email', req.body.email];
+                            return done(null, false, req.flash('signupMessage', message));
                         };
 
 
                         if (user) {
                             return done(null, false, req.flash('signupMessage', 'That email is ready'));
                         } else {
+                            console.log("qqqqqqqqqqq " + req.body.email);
                             if ((errors[0].param === "password") || (errors[1].param === "password")) {
-                                return done(null, false, req.flash('signupMessage', 'Incorrect Password'));
-                            }                            ;
+                                message = ['Incorrect Password', req.body.email];
+                                return done(null, false, req.flash('signupMessage', message));
+                            };
                         };
 
                     } else {
@@ -74,40 +84,59 @@ module.exports = function(passport) {
         passwordField : 'password',
         passReqToCallback : true
     },
+
     function(req, email, password, done) {
-        req.check('email', 'Invalid email').isEmail();
-        req.check('password', 'Password is invalid').matches(/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/g).isLength({min: 8});
+        req.check('email', 'Invalid email').isEmail().notEmpty();
+        req.check('password', 'Password is invalid').matches(/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/g).isLength({min: 8}).notEmpty();
 
         var errors = req.validationErrors();
 
+        if((req.body.email === "123") || (req.body.password === "123"))
+        {
+            req.body.email = "";
+            req.body.password = "";
+        };
 
-
+        console.log(errors);
 
             User.findOne({'local.email': email}, function (err, user) {
+
+                if(req.body.email === "123")
+                {
+                    req.body.email = "";
+                };
 
                 if(errors){
 
                     if (errors[0].param === "email") {
-                        return done(null, false, req.flash('loginMessage', 'Incorrect Email'));
+                        console.log(errors);
+                         message = ['Incorrect Email', req.body.email];
+                        return done(null, false, req.flash('loginMessage', message));
                     };
 
                     if (!user) {
-                        return done(null, false, req.flash('loginMessage', 'No user found.'));
+                         message = ['No user found', req.body.email];
+                        return done(null, false, req.flash('loginMessage', message));
                     } else {
                         if((errors[0].param === "password") || (errors[1].param === "password")){
-                            return done(null, false, req.flash('loginMessage', 'Incorrect Password'));
+                            console.log(errors);
+                            message = ['Incorrect Password', req.body.email];
+                            return done(null, false, req.flash('loginMessage', message));
                         };
                     }
                 } else {
                     if (err)
                         return done(err);
+                    if (!user){
+                        console.log("2223333");
+                        message = ['No user found', req.body.email];
+                        return done(null, false, req.flash('loginMessage', message));
+                    }
 
-                    if (!user)
-                        return done(null, false, req.flash('loginMessage', 'No user found.'));
-
-                    if (!user.validPassword(password))
-                        return done(null, false, req.flash('loginMessage', 'Wrong password'));
-
+                    if (!user.validPassword(password)){
+                        message = ['Wrong password', req.body.email];
+                        return done(null, false, req.flash('loginMessage', message));
+                    }
 
                     return done(null, user);
                 }

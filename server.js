@@ -131,12 +131,15 @@ app.get('/mainPage', function(req,res){
       //  var aboutAuthor = aboutBook; ??????????????????????????????????????????????
         aboutBook = tester;
         var count = 0;
+            console.log(tester);
         aboutBook.forEach(function(Book, i) {
             Author.findOne({_id: Book.author}, function (err, tester) {
                 if(err) console.log("no Author");
                 aboutAuthor[i] = tester;
                 count++;
+               // console.log(aboutAuthor);
                 if(count === aboutBook.length){
+                   // console.log(aboutAuthor);
                     res.render('mainPage', {
                         Books : aboutBook,
                         Authors : aboutAuthor,

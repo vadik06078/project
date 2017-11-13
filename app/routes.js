@@ -41,25 +41,37 @@ module.exports = function(app, passport) {
     });
 
     app.get('/login', function(req,res){
-        res.render('login.ejs', {message: req.flash('loginMessage')});
+            res.render('login.ejs', {message: req.flash('loginMessage') });
     });
 
     app.get('/signup', function(req, res) {
     res.render('signup.ejs', { message: req.flash('signupMessage')} );
 });
 
-    /*app.post('/signup', function(req, res, next){
+    app.post('/signup', function(req, res, next){
         req.check('email', 'Invalid email').isEmail();
         req.check('password', 'Password is invalid').matches(/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/g).isLength({min: 8});
 
         var errors = req.validationErrors();
         if(errors){
             //res.render('signup.ejs', req.flash('loginMessage', 'No user found'));
+
             console.log("i catch it");
+
+            if (req.body.email === ""){
+                req.body.email = "123";
+            }
+
+            if (req.body.password === ""){
+                req.body.password = "123";
+            }
+
+            console.log(req.body.password);
+            next();
         } else {
             next();
         }
-    });*/
+    });
 
     app.post('/signup', passport.authenticate('local-signup', {
         successRedirect : '/profile',
@@ -69,7 +81,7 @@ module.exports = function(app, passport) {
 
 
 
-  /*  app.post('/login', function(req, res, next){
+    app.post('/login', function(req, res, next){
         req.check('email', 'Invalid email').isEmail();
         req.check('password', 'Password is invalid').matches(/(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/g).isLength({min: 8});
 
@@ -77,10 +89,22 @@ module.exports = function(app, passport) {
         if(errors){
 
             console.log("i catch it");
+
+            if (req.body.email === ""){
+                req.body.email = "123";
+            }
+
+            if (req.body.password === ""){
+                req.body.password = "123";
+            }
+
+            next();
         } else {
             next();
         }
-    });*/
+
+
+    });
 
     app.post('/login', passport.authenticate('local-login', {
         successRedirect : '/profile',
@@ -93,9 +117,6 @@ module.exports = function(app, passport) {
 
 
     app.post('/mainPage', urlencodedParser, function(req,res){
-
-
-
 
         if ((req.body.filter === "name") || (req.body.filter === "sname")){
             console.log("попался");
